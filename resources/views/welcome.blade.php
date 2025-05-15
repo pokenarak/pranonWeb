@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>วัดพระนอนจักรสีห์ วรวิหาร</title>
+        <title>วัดพระนอนจักรสีห์</title>
 
         <link href="https://fonts.googleapis.com/css2?family=Krub:wght@200;300;500;700&display=swap" rel="stylesheet">
         @vite(['resources/css/welcome.css', 'resources/js/app.js'])
