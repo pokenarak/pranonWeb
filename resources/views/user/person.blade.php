@@ -12,6 +12,13 @@
             width: 100%;
             height: auto
         }
+        #person{
+            transition: .3s;
+        }
+        #person:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px -5px #ccc;
+        }
     </style>
     <div class="container-lg pt-4 pb-4" style="margin-top: 90px;height: 90%;">
         <div class="dropdown text-center mb-3">
@@ -27,67 +34,60 @@
             @endif
         </div>
         @if ($data->count()>0)
-        <div class="container-lg">
-            <div class="card border-0">
-                <div class="card-body">
-                    <div class="pb-4 text-center">
-                        <h3>{{ $type }}: <sup>{{ $data->count() }}</sup></h3>
-                        <div role="search">
-                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="ชื่อ..." onKeyup="searchName(this)">
-                            <datalist id="datalistOptions">
-                                @foreach ($data->pluck('name')->unique()->all() as $item)
-                                    <option value={{ $item}}>
-                                @endforeach
-                            </datalist>
+            <div class="container-lg">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <div class="pb-4 text-center">
+                            <h3>{{ $type }}: <sup>{{ $data->total() }}</sup></h3>
+                            <div role="search">
+                                <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="ชื่อ..." onKeyup="searchName(this)">
+                                <datalist id="datalistOptions">
+                                    @foreach ($data->pluck('name')->unique()->all() as $item)
+                                        <option value={{ $item}}>
+                                    @endforeach
+                                </datalist>
+                            </div>
                         </div>
-                    </div>
-                    <div class="container-lg">
-                        <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center " >
-                            @foreach ($data as $item)
-                                <div class="col mb-3 text-center " id="person {{ $item->name }}">
-                                    <div id="circleDiv">
-                                        @if ($item->path != '')
-                                            <img src="{{ asset($item->path) }}" alt="" style="filter: grayscale({{ $item->active == 1 ? '0%' : '100%' }})">
-                                        @else
-                                            <img src="{{ url('images/person/no.png') }}" alt="" style="filter: grayscale({{ $item->active == 1 ? '0%' : '100%' }})">
+                        <div class="container-lg">
+                            <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center " >
+                                @php
+                                    $type = "";
+                                @endphp
+                                @foreach ($data as $item)
+                                    @php
+                                        $allType = $item->type;
+                                        $mainType = $allType->whereIn('personnel_type_id',['1','2','3'])->first()
+                                    @endphp
+                                    @if($mainType)
+                                        @if ($mainType->personnel_type->name != $type)
+                                            @php
+                                                $type = $mainType->personnel_type->name;
+                                            @endphp
+                                            </div>
+                                            <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center " >
                                         @endif
+                                    @else
+                                        @if ($type != '')
+                                            </div>
+                                            <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center " >
+                                            @php
+                                                $type = '';
+                                            @endphp
+                                        @endif
+                                    @endif
+                                    <div class="col mb-3 text-center rounded-4 p-2" id="{{ 'person '.$item->name }}">
+                                        <a href="{{ route('personInfo',['id'=>$item->id]) }}" class="nav-link">
+                                            @include('layouts.personDetail')
+                                        </a>
                                     </div>
-                                    <div class="row text-center mt-2">
-                                        <div class="col-sm-12">
-                                            <h5 class="{{ $item->active == 1 ? 'text-primary' : 'text-dark' }}  fw-bold">{{ $item->name }} <small class="text-muted">{{ $item->lastname }}</small> {{ $item->ordianation_name }}</h5>
-                                        </div>
-                                    </div>
-                                    <div class="row text-center">
-                                        <div class="col">
-                                            @if ($item->ordain_monk)
-                                                <b>พรรษา : </b>{{ Carbon\Carbon::parse($item->ordain_monk)->age }}
-                                            @else
-                                                <b>อายุ : </b>{{ Carbon\Carbon::parse($item->birthday)->age }}
-                                            @endif
-
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            @if ($item->type->count()>0)
-                                                @foreach ($item->type->sortBy('personnel_type_id') as $type)
-                                                    <div class="row text-center">
-                                                        <div class="col-12 fst-italic text-muted">
-                                                            <small>{{ $type->personnel_type->name }}</small>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     </div>
+                    @if ($data->total()>$data->perPage())
+                        {{ $data->links('pagination::bootstrap-5') }}
+                    @endif
                 </div>
-                @if ($data->total()>$data->perPage())
-                    {{ $data->links('pagination::bootstrap-5') }}
-                @endif
             </div>
         @endif
     </div>

@@ -40,7 +40,7 @@
                                                 {{ $course->supject->name }}
                                             </div>
                                             <div class="col">
-                                                {{ $course->year+543 }}
+                                                ห้อง {{ $course->room}}
                                             </div>
                                         </div>
                                     </div>
@@ -56,13 +56,11 @@
                                                     <div class="row justify-content-around">
                                                         <div class="col-md-4">{{ $teacher->personnel->name }}  {{ $teacher->personnel->ordianation_name }}</div>
                                                         <div class="col-md-2">{{ $teacher->detail }}</div>
-                                                        <div class="col-md-2">{{ $teacher->salary }}</div>
                                                         @php
                                                             $id = $teacher->id;
                                                             $person = $teacher->personnel_id;
-                                                            $salary= $teacher->salary;
                                                             $detail = $teacher->detail;
-                                                            $data= (string)$id.','.$person.','.$salary.','.$detail;
+                                                            $data= (string)$id.','.$person.','.$detail;
                                                         @endphp
                                                         <div class="col-md-2"><button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTeacherModal" data-bs-whatever="{{ $data }}">แก้ไข</button></div>
                                                         @method('DELETE')
@@ -77,8 +75,9 @@
                                         @php
                                             $id = $course->id;
                                             $supject = $course->supject_id;
+                                            $room = $course->room;
                                             $year= $course->year;
-                                            $data= (string)$id.','.$supject.','.$year;
+                                            $data= (string)$id.','.$supject.','.$room.','.$year;
                                         @endphp
                                         <button type="button" class="btn btn-warning " data-bs-toggle="modal" data-bs-target="#editCourseModal" data-bs-whatever="{{ $data }}">แก้ไข</button>
                                         @method('DELETE')
@@ -138,36 +137,48 @@
                             </select>
                             <label for="floatingSelect">ปี</label>
                         </div>
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="supject" required>
+                                        <option selected>เลือกวิชา</option>
+                                        @foreach ($supjects as $supject)
+                                            <option value="{{ $supject->id }}">{{ $supject->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="floatingSelect">วิชา</label>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                 <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="floatingInput" placeholder="ก,ข" name="room" required>
+                                    <label for="floatingInput">ชื่อห้อง</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-floating mb-3">
-                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="person" required>
-                                <option selected>เลือกครูสอน</option>
+                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="person">
+                                <option selected value="">เลือกครูสอน</option>
                                 @foreach ($persons as $person)
                                     @php
                                         $flag = '';
                                         if(Str::length($person->ordain_monk)>0){
                                             $flag = 'พระ';
-                                        }else {
+                                        }else if(Str::length($person->ordain_novice)>0){
                                             $flag = 'สามเณร';
+                                        }else{
+                                            $flag = 'คุณ';
                                         }
                                     @endphp
                                     <option value="{{ $person->id }}">{{ $flag }} {{ $person->name }} {{ $person->ordianation_name }} {{ $person->lastname }}</option>
                                 @endforeach
                             </select>
                             <label for="floatingSelect">ครูสอน</label>
-                            <small class="text-muted">ต้องเพิ่มตำแหน่ง "ครูสอน" ในข้อมูลบุคลากร</small>
+                            {{-- <small class="text-muted">ต้องเพิ่มตำแหน่ง "ครูสอน" ในข้อมูลบุคลากร</small> --}}
                         </div>
                         <div class="form-floating mb-3">
-                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="supject" required>
-                                <option selected>เลือกวิชา</option>
-                                @foreach ($supjects as $supject)
-                                    <option value="{{ $supject->id }}">{{ $supject->name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="floatingSelect">วิชา</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="detail" required>
-                                <option selected>เลือกตำแหน่ง</option>
+                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="detail">
+                                <option selected value="">เลือกตำแหน่ง</option>
                                 <option value="ครูสอน">ครูสอน</option>
                                 <option value="ครูช่วยสอน">ครูช่วยสอน</option>
                                 <option value="กองตรวจ">กองตรวจ</option>
@@ -196,18 +207,28 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="hidden" name="id" id="id">
-                            <select class="form-select" id="supjectSelect" aria-label="Floating label select example" name="supject" required>
-                                <option selected>เลือกวิชา</option>
-                                @foreach ($supjects as $supject)
-                                    <option value="{{ $supject->id }}">{{ $supject->name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="supjectSelect">วิชา</label>
-                        </div>
-                        <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="yearInput" placeholder="name@example.com" name="year" required>
                             <label for="yearInput">ปีการศึกษา</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="form-floating mb-3">
+                                    <input type="hidden" name="id" id="id">
+                                    <select class="form-select" id="supjectSelect" aria-label="Floating label select example" name="supject" required>
+                                        <option selected>เลือกวิชา</option>
+                                        @foreach ($supjects as $supject)
+                                            <option value="{{ $supject->id }}">{{ $supject->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="supjectSelect">วิชา</label>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="roomInput" placeholder="ก,ข" name="room" required >
+                                    <label for="floatingInput">ชื่อห้อง</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -271,7 +292,8 @@
             var textArray = recipient.split(',');
             editCourseModal.querySelector('.modal-body #id').value = textArray[0];
             editCourseModal.querySelector('.modal-body #supjectSelect').value = textArray[1];
-            editCourseModal.querySelector('.modal-body #yearInput').value = Number(textArray[2])+543;
+            editCourseModal.querySelector('.modal-body #roomInput').value = textArray[2];
+            editCourseModal.querySelector('.modal-body #yearInput').value = Number(textArray[3])+543;
         })
 
         var editTeacherModal = document.getElementById('editTeacherModal')
@@ -281,8 +303,7 @@
             var textArray = recipient.split(',');
             editTeacherModal.querySelector('.modal-body #id').value = textArray[0];
             editTeacherModal.querySelector('.modal-body #personSelect').value = textArray[1];
-            editTeacherModal.querySelector('.modal-body #salaryInput').value = textArray[2];
-            editTeacherModal.querySelector('.modal-body #detailSelect').value = textArray[3];
+            editTeacherModal.querySelector('.modal-body #detailSelect').value = textArray[2];
         })
     </script>
 </x-app-layout>

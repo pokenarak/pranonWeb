@@ -6,12 +6,15 @@ use App\Models\Action;
 use App\Models\Personnel;
 use App\Models\personnel_type;
 use App\Models\Rank;
+use App\Models\Register;
+use App\Models\Supject;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class PersonnelController extends Controller
 {
@@ -23,8 +26,12 @@ class PersonnelController extends Controller
             case 'monk':
                 $type = 'พระภิกษุ';
 
-                $master = Personnel::whereHas('type')->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get();
-                $under = Personnel::whereDoesntHave('type')->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get();
+                $master = Personnel::whereHas('type',function (Builder $query){
+                    $query->whereIn('personnel_type_id',['1','2','3']);
+                })->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get()->sortBy('type.personnel_type_id',SORT_REGULAR,false);
+                $under = Personnel::whereDoesntHave('type',function (Builder $query){
+                    $query->whereIn('personnel_type_id',['1','2','3']);
+                })->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get();
                 $data = $master->merge($under);
                 $data = collect($data)->paginate(20);
             break;
@@ -39,14 +46,29 @@ class PersonnelController extends Controller
         }
         $sortData = $data->getCollection()->sortByDesc('active');
         $data->setCollection($sortData);
+        $data->each(function($item){
+            $item->name = $this->nameTitle($item->id,$item).$item->name;
+        });
         return view('admin.person.index',compact('data','type'));
     }
     public function show($id)
     {
         $person = Personnel::where('id',$id)->first();
-        $person->people_id = Crypt::decryptString($person->people_id);
-        $person->phone = Crypt::decryptString($person->phone);
-        return view('admin.person.show',compact('person'));
+        if($person->people_id){
+            $person->people_id = Crypt::decryptString($person->people_id);
+        }
+        if($person->phone){
+            $person->phone = Crypt::decryptString($person->phone);
+        }
+        $success = Register::with('course')->whereNotNull('result')->where('personnel_id',$id)->get()->sortBy('course.year');
+        $supjects = Supject::all();
+        $person->name = $this->nameTitle($person->id,$person).$person->name;
+        $files='';
+        if(Storage::directoryExists('person/'.$person->id)){
+            $files=Storage::disk('public')->allFiles('person/'.$person->id);
+        }
+        
+        return view('admin.person.show',compact('person','success','supjects','files'));
     }
 
     public function create()
@@ -56,11 +78,6 @@ class PersonnelController extends Controller
     }
     public function store(Request $request)
     {
-
-        $path = '';
-        if ($request->file('image')) {
-            $path = $this->upload($request);
-        }
         $personnel = new Personnel();
         $personnel->name = $request->name;
         $personnel->lastname = $request->lastname;
@@ -71,33 +88,16 @@ class PersonnelController extends Controller
         $personnel->birthday = $request->birthday;
         $personnel->ordain_novice = $request->noviceDate;
         $personnel->ordain_monk = $request->ordianDate;
-        $personnel->ordain_nun = $request->nunDate;
         $personnel->old_temple_name = $request->oldTemple;
         $personnel->old_temple_tel = $request->oldTempleTel;
-        $personnel->path = $path;
         $personnel->active = '1';
         $personnel->save();
-        if($types = $request->typeChips){
-            foreach ($types as $value) {
-                $flag = explode(':',$value);
-                $type = new Type();
-                $type->personnel_type_id = $flag[0];
-                $type->date = trim($flag[1]);
-                $type->personnel_id = $personnel->id;
-                $type->save();
-            }
+        if ($request->file('image')) {
+            $path = $this->upload($request,$personnel->id);
+            $personnel->path = $path;
+            $personnel->save();
         }
-        if($ranks = $request->rankChips){
-            foreach ($ranks as $value) {
-                $flag = explode(':',$value);
-                $rank = new Rank();
-                $rank->name = $flag[0];
-                $rank->date = trim($flag[1]);
-                $rank->personnel_id =  $personnel->id;
-                $rank->save();
-            }
-        }
-        $type ='monk';
+        $type ='nun';
         if($request->noviceDate){
             $type = 'novice';
         }
@@ -111,11 +111,11 @@ class PersonnelController extends Controller
 
         return Redirect()->route('person',['type'=>$type])->with('success','เพิ่ม บุคลากร เรียบร้อย');
     }
-    public function upload(Request $request)
+    public function upload(Request $request,$id)
     {
         $file = $request->file('image');
         $file->hashName();
-        $path = Storage::put('person',$file,'public');
+        $path = Storage::put('person/'.$id,$file,'public');
         return 'images/'.$path;
 
     }
@@ -131,11 +131,7 @@ class PersonnelController extends Controller
     {
         $personnel = Personnel::find($id);
         if ($request->file('image')) {
-            if($path = $personnel->path){
-                $cutPath = substr($path,8);
-                Storage::delete($cutPath);
-            }
-            $path = $this->upload($request);
+            $path = $this->upload($request,$id);
             $personnel->path = $path;
         }
         $active = 0;
@@ -151,34 +147,11 @@ class PersonnelController extends Controller
         $personnel->birthday = $request->birthday;
         $personnel->ordain_novice = $request->noviceDate;
         $personnel->ordain_monk = $request->ordianDate;
-        $personnel->ordain_nun = $request->nunDate;
         $personnel->old_temple_name = $request->oldTemple;
         $personnel->old_temple_tel = $request->oldTempleTel;
         $personnel->active = $active;
         $personnel->save();
-        if($types = $request->typeChips){
-            Type::where('personnel_id',$personnel->id)->delete();
-            foreach ($types as $value) {
-                $flag = explode(':',$value);
-                $type = new Type();
-                $type->personnel_type_id = $flag[0];
-                $type->date = trim($flag[1]);
-                $type->personnel_id = $personnel->id;
-                $type->save();
-            }
-        }
-        if($ranks = $request->rankChips){
-            Rank::where('personnel_id',$personnel->id)->delete();
-            foreach ($ranks as $value) {
-                $flag = explode(':',$value);
-                $rank = new Rank();
-                $rank->name = $flag[0];
-                $rank->date = trim($flag[1]);
-                $rank->personnel_id =  $personnel->id;
-                $rank->save();
-            }
-        }
-        $type ='monk';
+        $type ='nun';
         if($request->noviceDate){
             $type = 'novice';
         }
@@ -197,8 +170,7 @@ class PersonnelController extends Controller
         $personnel = Personnel::find($id);
         $path = $personnel->path;
         if ($path) {
-            $cutPath = substr($path,8);
-            Storage::delete($cutPath);
+            Storage::deleteDirectory('person/'.$id);
         }
         Personnel::destroy($id);
         $type ='monk';
@@ -216,6 +188,13 @@ class PersonnelController extends Controller
         return redirect()->route('person',['type'=>$type])->with('success','ลบ บุคลากร เรียบร้อย');
     }
 
+    public function deleteImage($id,$path)
+    {
+
+        Storage::delete('person/'.$id."/".$path);
+
+        return redirect()->back()->with('success','ลบ รูปภาพเรียบร้อย เรียบร้อย');
+    }
     static function Action($id_table,$act){
         $action = new Action();
         $action->id_table_action = $id_table;
@@ -224,6 +203,25 @@ class PersonnelController extends Controller
         $action->table_name = Action::$PERSONNEL;
         $action->date = Carbon::now();
         $action->save();
+    }
+    private function nameTitle($id,$person){
+        $flag = Register::whereHas('course',function (Builder $q){
+            $q->whereHas('supject',function (Builder $que){
+                $que->where('name','like','%ป.ธ. ๓%');
+            });
+            $q->whereNotNull('result');
+        })->where('personnel_id',$id)->get();
+        $nameTitle ='คุณ';
+        if(!$person->ordain_monk == ''){
+            if(!$flag->isEmpty()){
+                $nameTitle = "พระมหา";
+            }else{
+                $nameTitle = "พระ";
+            }
+        }else if(!$person->ordain_novice == ''){
+            $nameTitle = "สามเณร";
+        }
+        return $nameTitle;
     }
 
 }

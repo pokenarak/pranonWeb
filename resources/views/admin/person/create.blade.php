@@ -53,33 +53,27 @@
                                             <label for="inputOrdianName">ฉายา</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
-                                            <input type="date" class="form-control border-primary" id="inputBirthday" placeholder="ฉายา" name="birthday" required >
+                                            <input type="date" class="form-control border-primary" id="inputBirthday" placeholder="ฉายา" name="birthday">
                                             <label for="inputBirthday">วันเกิด</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
-                                            <input type="date" class="form-control border-warning" id="inputNovicDate" placeholder="วันบวชเป็นสามเณร" name="noviceDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นสามเณร" onchange="chandDataOrdianDate(this)">
+                                            <input type="date" class="form-control border-warning" id="inputNovicDate" placeholder="วันบวชเป็นสามเณร" name="noviceDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นสามเณร" >
                                             <label for="inputNovicDate">วันบรรพชา</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
-                                            <input type="date" class="form-control border-warning" id="inputOrdianDate" placeholder="วันบวชเป็นพระ" name="ordianDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นพระภิกษุ" onchange="chandDataOrdianDate(this)">
+                                            <input type="date" class="form-control border-warning" id="inputOrdianDate" placeholder="วันบวชเป็นพระ" name="ordianDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นพระภิกษุ" >
                                             <label for="inputOrdianDate">วันอุปสมบท</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-floating mb-3">
-                                            <input type="date" class="form-control" id="inputNunDate" placeholder="วันรับศีล๘" name="nunDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันรับศีล๘" onchange="changDateNun(this)">
-                                            <label for="inputNunDate">วันรับศีล๘</label>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="inputPeopleId" placeholder="เลขประจำตัวประชาชน" name="peopleId" maxlength="13" required data-bs-toggle="tooltip" data-bs-placement="top" title="เลขประจำตัวประชาชนหรือเลขหนังสือเดินทาง">
+                                            <input type="text" class="form-control" id="inputPeopleId" placeholder="เลขประจำตัวประชาชน" name="peopleId" maxlength="13" data-bs-toggle="tooltip" data-bs-placement="top" title="เลขประจำตัวประชาชนหรือเลขหนังสือเดินทาง">
                                             <label for="inputPeopleId">เลขประจำตัวประชาชน</label>
                                         </div>
                                     </div>
@@ -198,26 +192,7 @@
         </div>
     </div>
     <script>
-        function changDateNun(event){
-            var novice = document.getElementById('inputNovicDate') ;
-            var monk = document.getElementById('inputOrdianDate') ;
-            if(event.value){
-                novice.disabled = true;
-                monk.disabled = true;
-            }else{
-                novice.disabled = false;
-                monk.disabled = false;
-            }
-        }
-        function chandDataOrdianDate(event){
-            var nun = document.getElementById('inputNunDate') ;
-            if(event.value){
-                nun.disabled = true;
-            }else{
-                nun.disabled = false;
-            }
-        }
-        function createChip(text,id,date,idDiv){
+         function createChip(text,id,date,idDiv){
             const div = document.createElement('div');
             div.className='chip'
             const options = { day: 'numeric', month: 'narrow',year: '2-digit'  };

@@ -16,8 +16,9 @@
                                     <div class="card-body">
                                         <blockquote class="blockquote mb-1">
                                             <p class="card-text"><a href="{{ route('showPilgrimage',['id'=>$item->firstStop]) }}" style="text-decoration: none;" class="w-100 fw-bold {{ $item->stage =='ในประเทศ' ? 'link-primary':'link-warning' }}">{{ $item->name }}</a></p>
-                                            <footer class="blockquote-footer overflow-hidden" style="white-space: break-spaces;text-overflow: ellipsis;max-height:150px"> {{ $item->detail }}</footer>
+                                            <footer class="blockquote-footer cuttext"> {{ $item->detail }}</footer>
                                         </blockquote>
+                                        <hr>
                                         <b>เริ่ม :</b> {{ \Carbon\Carbon::parse($item->start)->addYear(543)->locale('th')->isoFormat('D MMMM YYYY') }}
                                         <b>ถึง :</b> {{ \Carbon\Carbon::parse($item->end)->addYear(543)->locale('th')->isoFormat('D MMMM YYYY') }}
                                         <div><small class="text-muted">จุดหมาย <b>{{ $item->stop->count() }}</b> จุด</small></div>

@@ -27,42 +27,28 @@
                         @endforeach
                     </ul>
                 </div>
-                <form action="{{ route('deleteRainsRetreat') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    @method('DELETE')
-                    <div>
-                        <div class="text-end fst-italic small">
-                            อยู่จำพรรษาทั้งสิ้น : <b>{{ $rainsRetreat->count() }}</b> พระภิกษุ : {{ $m }} สามเณร : {{ $n }}
+                <div class="container">
+                    <div class="text-end fst-italic small">
+                        @php
+                            $countNovice = $n->count();
+                            $countMonk = $m->count();
+                        @endphp
+                        อยู่จำพรรษาทั้งสิ้น : <b>{{ $countNovice+$countMonk}}</b> พระภิกษุ : {{ $countMonk }} สามเณร : {{ $countNovice }}
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            @php
+                                $persons = $m;
+                                $type = 'm';
+                            @endphp
+                            @include('layouts.personRainsRetreat')
                         </div>
-                        <div>
-                            <div class=" list-group list-group-flush">
-                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 justify-content-center overflow-auto" style="max-height: 450px">
-                                    @foreach ($rainsRetreat as $key => $item)
-                                    <div class="col">
-                                        <label class="list-group-item align-items-center mb-2 rounded" style="display: flex">
-                                            <input class="form-check-input me-2" type="checkbox" value="{{ $item->id }}" id="person" name="persons[]">
-                                            @if ($item->personnel->path != '')
-                                                <img src="{{ asset($item->personnel->path) }}" alt="" id="image-cropper">
-                                            @else
-                                                <img src="{{ asset('storage/person/no.png') }}" alt="" id="image-cropper">
-                                            @endif
-                                            <a href="{{ route('personnel.show',['personnel'=>$item->personnel->id]) }}" style="text-decoration: none;margin-left: 8px">
-                                                {{ $item->personnel->ordain_monk != '' ? 'พระ' : 'สามเณร' }} {{ $item->personnel->name }} <small class="text-muted">{{ $item->personnel->ordianation_name }}</small> {{ $item->personnel->lastname }}
-                                            </a>
-                                        </label>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="row justify-content-end align-items-center">
-                                <div class="col col-sm-auto col-md-auto text-end">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="personSwitch"  onchange="changSelect('person')" >
-                                    <label class="form-check-label" for="flexSwitchCheckDefault">เลือกทั้งหมด</label>
-                                </div>
-                                <div class="col col-sm-2 col-md-1">
-                                    <input type="submit" class="btn btn-outline-danger btn-sm" value="ลบ">
-                                </div>
-                            </div>
+                        <div class="col-6">
+                            @php
+                                $persons = $n;
+                                $type = 'n';
+                            @endphp
+                            @include('layouts.personRainsRetreat')
                         </div>
                     </div>
                     <div class="row mt-3 text-center">
@@ -73,11 +59,6 @@
                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#noviceModal">เพิ่มสามเณร</button>
                         </div>
                     </div>
-                </form>
-                <div class="row mt-3">
-                    @if ($rainsRetreat->total()>$rainsRetreat->perPage())
-                        {{ $rainsRetreat->links('pagination::bootstrap-5') }}
-                    @endif
                 </div>
             </div>
         </div>
@@ -129,15 +110,22 @@
                                     <div class="col-2">
                                         <input class="form-check-input" type="checkbox" name="persons[]" value="{{ $item->id }}" id="monk" >
                                     </div>
-                                    <div class="col-3">
-                                        {{ $item->name }}
-                                    </div>
-                                    <div class="col-3">
-                                        {{ $item->lastname }}
-                                    </div>
-                                    <div class="col-3">
-                                        {{ $item->ordianation_name }}
-                                    </div>
+                                    @if ($item->rank->count()>0)
+                                        <div class="class col-9">
+                                            {{ $item->lastestRank->name }}
+                                        </div>
+                                    @else
+                                        <div class="col-3">
+                                            {{ $item->name }}
+                                        </div>
+                                        <div class="col-3">
+                                            {{ $item->lastname }}
+                                        </div>
+                                        <div class="col-3">
+                                            {{ $item->ordianation_name }}
+                                        </div>
+                                    @endif
+
                                 </div>
                             @endforeach
                         </div>

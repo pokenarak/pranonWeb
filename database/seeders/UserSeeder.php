@@ -18,11 +18,17 @@ class UserSeeder extends Seeder
     {
         DB::table('users')->insert([
             'name'=>'Admin',
-            'email'=>'apst2535@gmail.com',
-            'username'=>'admin',
+            'email'=>'watpranonjaksri@outlook.com',
             'password'=> Hash::make('12345678'),
-            'role'=>User::$SUPER_ADMIN,
-            'personnel_id'=>1,
+            'role'=>'SUPER_ADMIN',
+            'personnel_id'=>0
+        ]);
+        DB::table('users')->insert([
+            'name'=>'Admin',
+            'email'=>'Katoyota_001@hotmail.com',
+            'password'=> Hash::make('12345678'),
+            'role'=>'SUPER_ADMIN',
+            'personnel_id'=>0
         ]);
     }
 }

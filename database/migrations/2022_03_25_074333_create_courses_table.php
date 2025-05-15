@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('supject_id')->constrained()->onUpdate('CASCADE')->onDelete('RESTRICT');
+            $table->char('room', length: 50);
             $table->year('year');
             $table->timestamps();
         });

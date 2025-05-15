@@ -6,7 +6,7 @@ use App\Models\Action;
 use App\Models\Personnel;
 use App\Models\RainsRetreat;
 use Carbon\Carbon;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +18,7 @@ class RainsRetreatController extends Controller
         $year = $request->year-543;
         $rainsRetreat = '';
         foreach ($persons as  $value) {
-            $rainsRetreat =RainsRetreat::firstOrCreate(
+            $rainsRetreat =RainsRetreat::updateOrCreate (
                 ['year' => $year,'personnel_id' => $value ]
             );
         }
@@ -34,24 +34,21 @@ class RainsRetreatController extends Controller
      */
     public function show($year)
     {
-        $years = '';
-        $rainsRetreat = RainsRetreat::where('year',$year)->orderByRaw('(select ordain_monk from personnels where personnels.id = rains_retreats.personnel_id)')->orderByRaw('(select birthday from personnels where personnels.id = rains_retreats.personnel_id)')->orderBy('id','asc')->paginate(30);
+        $m = RainsRetreat::where('year',$year)->whereHas('personnel',function (Builder $q){
+            $q->whereNotNull('ordain_monk');
+        })->get();
 
-        $m =0;$n=0;
-        foreach ($rainsRetreat as $value) {
-            if($value->personnel->ordain_monk != ''){
-                $m++;
-            }else{
-                $n++;
-            }
-        }
+        $n = RainsRetreat::where('year',$year)->whereHas('personnel',function (Builder $q){
+            $q->whereNull('ordain_monk');
+            $q->whereNotNull('ordain_novice');
+        })->get();
         $years = RainsRetreat::orderByDesc('year')->pluck('year')->unique();
 
         $persons = Personnel::all();
         $monks = $persons->whereNotNull('ordain_monk')->sortBy('ordain_monk')->all();
         $novices = $persons->whereNull('ordain_monk')->whereNotNull('ordain_novice')->sortBy('birthday')->all();
 
-        return view('admin.rainsRetreat',compact('years','rainsRetreat','monks','novices','m','n'));
+        return view('admin.rainsRetreat',compact('years','m','n','monks','novices'));
     }
     public function destroy(Request $request)
     {

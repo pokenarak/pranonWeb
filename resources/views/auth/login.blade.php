@@ -1,35 +1,49 @@
-<x-guest-layout>
-    <div class="card text-center bg-dark text-white" style="position: fixed;top:0;left: 0;bottom: 0;right: 0;">
-        <div class="card-body text-center">
-            <div style="position: absolute;top: 50%;left: 50%;margin-top: -15rem;margin-left: -15rem;">
-                <form method="POST" action="{{ route('login') }}" style="width: 30rem;" >
-                    @csrf
-                    <h1>วัดพระนอนจักรสีห์ วริวหาร</h1>
-                    <h4 class="mb-3">ยินดีต้อนรับ</h4>
-                    <div class="input-group mb-3 input-group-lg">
-                        <span class="input-group-text" id="inputGroup-sizing-default">@</span>
-                        <input type="email" name="email" :value="old('email')" required autofocus autocomplete="email" class="form-control" id="exampleDropdownFormEmail2" placeholder="email@example.com">
-                    </div>
-                    <div class="input-group mb-3 input-group-lg">
-                        <span class="input-group-text" id="inputGroup-sizing-default">รหัสผ่าน</span>
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <x-checkbox id="remember_me" name="remember" />
-                            <label class="form-check-label" for="dropdownCheck2">
-                                อยู่ในระบบ
-                            </label>
-                        </div>
-                    </div>
-                    @if (Route::has('password.request'))
-                        <a style="text-decoration: none" href="{{ route('password.request') }}">
-                            {{ __('ลืมรหัสผ่าน') }}
-                        </a>
-                    @endif
-                    <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
-                </form>
+@extends('auth.auth')
+@section('content')
+    <x-authentication-card>
+        <x-slot name="logo">
+            <x-authentication-card-logo />
+        </x-slot>
+
+        <x-validation-errors class="mb-4" />
+
+        @if (session('status'))
+            <div class="mb-4 font-medium text-sm text-green-600">
+                {{ session('status') }}
             </div>
-        </div>
-    </div>
-</x-guest-layout>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <div>
+                <x-label for="email" value="{{ __('Email') }}" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="password" value="{{ __('Password') }}" />
+                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+            </div>
+
+            <div class="block mt-4">
+                <label for="remember_me" class="flex items-center">
+                    <x-checkbox id="remember_me" name="remember" />
+                    <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                </label>
+            </div>
+
+            <div class="flex items-center justify-end mt-4">
+                @if (Route::has('password.request'))
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+
+                <x-button class="ms-4">
+                    {{ __('Log in') }}
+                </x-button>
+            </div>
+        </form>
+    </x-authentication-card>
+@endsection

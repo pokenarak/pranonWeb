@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Action;
-use App\Models\Personnel_type;
+use App\Models\personnel_type;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

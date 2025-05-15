@@ -12,6 +12,7 @@ class Activity extends Model
         'topic',
         'detail',
         'user_id',
+        'type',
         'date'
     ];
     public function user()

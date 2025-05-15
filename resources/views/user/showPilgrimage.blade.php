@@ -1,79 +1,65 @@
 <x-guest-layout>
     <style>
-        h4{
-            text-shadow: 1px 1px 2px black;
-            padding: 10px
-        }
-        .timeline-steps {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap
+        .uk-timeline .uk-timeline-item .uk-card {
+            max-height: 300px;
         }
 
-        .timeline-steps .timeline-step {
-            align-items: center;
+        .uk-timeline .uk-timeline-item {
             display: flex;
-            flex-direction: column;
             position: relative;
-            margin: 1rem
         }
 
-        @media (min-width:768px) {
-            .timeline-steps .timeline-step:not(:last-child):after {
-                content: "";
-                display: block;
-                border-top: .25rem dotted hsla(335, 87%, 30%, 0.842);
-                width: 3.46rem;
-                position: absolute;
-                left: 7.5rem;
-                top: .3125rem
-            }
-            .timeline-steps .timeline-step:not(:first-child):before {
-                content: "";
-                display: block;
-                border-top: .25rem dotted hsla(335, 87%, 30%, 0.842);
-                width: 3.8125rem;
-                position: absolute;
-                right: 7.5rem;
-                top: .3125rem
-            }
-        }
-
-        .timeline-steps .timeline-content {
-            width: 10rem;
-            text-align: center
-        }
-
-        .timeline-steps .timeline-content .inner-circle {
-            border-radius: 1.5rem;
-            height: 1rem;
-            width: 1rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            /* background-color: #3b82f6 */
-        }
-
-        .timeline-steps .timeline-content .inner-circle:before {
+        .uk-timeline .uk-timeline-item::before {
+            background: #dadee4;
             content: "";
-            background-color: hsla(335, 78%, 45%, 0.842);
-            display: inline-block;
-            height: 3rem;
-            width: 3rem;
-            min-width: 3rem;
-            border-radius: 6.25rem;
-            opacity: .5
+            height: 100%;
+            left: 19px;
+            position: absolute;
+            top: 20px;
+            width: 2px;
+                z-index: -1;
         }
-        span {
-            content: "\2713";
+
+        .uk-timeline .uk-timeline-item .uk-timeline-icon .uk-badge {
+            margin-top: 20px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .uk-timeline .uk-timeline-item .uk-timeline-content {
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0 0 0 1rem;
+        }
+
+        .uk-badge {
+            box-sizing: border-box;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 5px;
+            border-radius: 500px;
+            vertical-align: middle;
+            color: #fff;
+            font-size: .875rem;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center
+        }
+        .uk-badge-in {
+            background: #1e87f0;
+        }
+        .uk-badge-out {
+            background: #8ab100;
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent; /* make scrollbar transparent */
         }
     </style>
-
-
-    <div class="container-fluid pt-4" style="margin-top: 90px;height: 90%;">
+    <div class="container pt-4" style="margin-top: 90px;height: 90%;">
         <div class="card border-0">
             <div class="card-body">
-                <div class="container-fluid " >
+                <div class="container-fluid" >
                     <div class="row">
                         <div class="col">
                             <div class="pb-4 text-center">
@@ -91,39 +77,23 @@
                             <div class="row">
                                 @php
                                     $data = $pilgrimage->stop->sortDesc();
-                                    $data->values()->all();
                                 @endphp
-                                <div class="timeline-steps aos-init aos-animate" data-aos="fade-up">
-                                    @foreach ($data->sortBy('date')->all() as $index => $item)
-                                    <div class="timeline-step">
-                                        <div class="timeline-content" data-toggle="popover" data-trigger="hover" data-placement="top" title="" data-content="And here's some amazing content. It's very engaging. Right?" data-original-title="2003">
-                                            <a href="{{ route('showPilgrimage',['id'=>$item->id]) }}" class="text-decoration-none mt-3">
-                                                <div class="inner-circle">
-                                                    <div style="position: absolute" class="fs-3 fw-bold {{ URL::current()==route('showPilgrimage',['id'=> $item->id])?'text-danger':'text-white' }}">
-                                                        @if ($item->stopImage->count()>0 )
-                                                            <span>&#10003;</span>
-                                                        @else
-                                                           {{ $index+1 }}
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <p class="h6 mt-3 mb-1">
-                                                {{ $item->detail }}
-                                            </p>
-                                            <p class="h6 text-muted mb-0 mb-lg-0">{{ \Carbon\Carbon::parse($item->date)->addYear(543)->locale('th')->isoFormat('D MMM YY') }}</p>
+                                <div class="cols col-md-4" style="height: 70vh;overflow: auto;">
+                                    <div class="uk-container uk-padding">
+                                        <div class="uk-timeline">
+                                            @foreach ($data as $index => $item)
+                                                @include('layouts.pilgrimage')
+                                            @endforeach
                                         </div>
                                     </div>
-                                    @endforeach
                                 </div>
-                            </div>
-                            <div class="row">
+                                <div class="col">
                                     @php
                                         $dataGallery = $stops->stopImage;
                                     @endphp
                                     @include('layouts.gallery')
-                            </div>
+                                </div>
+                            </div>                                
                         </div>
                     </div>
                 </div>

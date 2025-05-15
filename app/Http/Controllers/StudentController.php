@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RegisterExport;
 use App\Models\Action;
 use App\Models\Course;
 use App\Models\Personnel;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -25,19 +27,46 @@ class StudentController extends Controller
             },
         ])->where('year' , $year)->orderBy('year','DESC')->orderBy('supject_id','ASC')->get();
 
-        $monks = Personnel::where('active','1')->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC');
+        $personPali = Personnel::where('active','1')->whereDoesntHave('register',function ($q) use($year){
+            $q->whereHas('course',function($query) use ($year){
+                $query->where('year',$year);
+                $query->whereHas('supject',function($qe){
+                    $qe->where('type','บาลี');
+                });
+            });
+        })->get();
+        $personDhamma = Personnel::where('active','1')->whereDoesntHave('register',function ($q) use($year){
+            $q->whereYear('date',$year);
+            $q->whereHas('course',function($query){
+                $query->whereHas('supject',function($qe){
+                    $qe->where('type','นักธรรม');
+                });
+            });
+        })->get();
 
-        $novices = Personnel::where('active','1')->whereNotNull('ordain_novice')->whereNull('ordain_monk')->orderBy('birthday');
+        $monkPali = $personPali->whereNotNull('ordain_novice')->whereNotNull('ordain_monk')->sortBy('ordain_monk');
+        $monkDhamma = $personDhamma->whereNotNull('ordain_novice')->whereNotNull('ordain_monk')->sortBy('ordain_monk');
 
-        $persons = $monks->union($novices)->get();
+        $novicePali = $personPali->whereNotNull('ordain_novice')->whereNull('ordain_monk')->sortBy('birthday');
+        $noviceDhamma = $personDhamma->whereNotNull('ordain_novice')->whereNull('ordain_monk')->sortBy('birthday');
+
+        $nunPali = $personPali->whereNull('ordain_novice')->whereNull('ordain_monk')->sortBy('birthday');
+        $nunDhamma = $personDhamma->whereNull('ordain_novice')->whereNull('ordain_monk')->sortBy('birthday');
+            
         $years = Course::select('year')->orderBy('year','DESC')->groupBy('year')->get();
 
-        return view('admin.student',compact('courses','years','persons'));
+
+        return view('admin.student',compact('courses','years','monkPali','monkDhamma','novicePali','noviceDhamma','nunPali','nunDhamma'));
+    }
+    public function exportPali() 
+    {
+        return Excel::download(new RegisterExport('2025'), 'pali.xlsx');
     }
     public function store(Request $request)
     {
         $students = $request->student;
         $id = $request->id;
+        $year = Course::select('year')->where('id',$id)->first();
         $date = Carbon::now();
         foreach ($students as  $value) {
            Register::firstOrCreate(
@@ -46,7 +75,7 @@ class StudentController extends Controller
             );
         }
         $this->Action(0,Action::$INSERT_ACTION);
-        return redirect()->route('student',['year'=>$date->year])->with('success','เพิ่ม นักเรียน เรียบร้อย');
+        return redirect()->route('student',['year'=>$year->year])->with('success','เพิ่ม นักเรียน เรียบร้อย');
     }
     public function update(Request $request)
     {

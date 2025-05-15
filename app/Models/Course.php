@@ -10,7 +10,8 @@ class Course extends Model
     use HasFactory;
     protected $fillable = [
         'year',
-        'supject_id'
+        'supject_id',
+        'room'
     ];
 
     public function register()

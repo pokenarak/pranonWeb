@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('teacters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id')->constrained()->onUpdate('CASCADE')->onDelete('RESTRICT');
-            $table->foreignId('personnel_id')->constrained()->onUpdate('CASCADE')->onDelete('RESTRICT');
+            $table->foreignId('personnel_id')->nullable()->constrained();
             $table->string('detail')->nullable();
             $table->timestamps();
         });

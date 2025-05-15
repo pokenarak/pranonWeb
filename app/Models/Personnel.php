@@ -20,7 +20,6 @@ class Personnel extends Model
         'birthday',
         'ordain_novice',
         'ordain_monk',
-        'ordain_nun',
         'old_temple_name',
         'old_temple_tel',
         'active',
@@ -49,6 +48,14 @@ class Personnel extends Model
     public function rainsRetreat()
     {
         return $this->hasMany(RainsRetreat::class);
+    }
+    public function lastestType()
+    {
+        return $this->hasOne(Type::class)->latestOfMany();
+    }
+    public function lastestRank()
+    {
+        return $this->hasOne(Rank::class)->latestOfMany();
     }
 
 }

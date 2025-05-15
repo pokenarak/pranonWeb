@@ -15,17 +15,16 @@ return new class extends Migration
     {
         Schema::create('personnels', function (Blueprint $table) {
             $table->id();
-            $table->string('people_id');
+            $table->string('people_id')->nullable();
             $table->string('name');
             $table->string('lastname');
             $table->string('ordianation_name')->nullable();
             $table->string('address');
             $table->string('position')->nullable();
             $table->string('phone')->nullable();
-            $table->date('birthday');
+            $table->date('birthday')->nullable();
             $table->date('ordain_novice')->nullable();
             $table->date('ordain_monk')->nullable();
-            $table->date('ordain_nun')->nullable();
             $table->string('old_temple_name')->nullable();
             $table->string('old_temple_tel')->nullable();
             $table->string('path')->nullable();

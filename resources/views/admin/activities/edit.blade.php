@@ -27,6 +27,15 @@
                                     <label for="inputBirthday">วันที่</label>
                                 </div>
                                 <div class="form-floating mb-3">
+                                    <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name='type'>
+                                        <option value="การศึกษา" {{ $item->type =='การศึกษา'?'selected':'' }}>การศึกษา</option>
+                                        <option value="เผยแพร่" {{ $item->type =='เผยแพร่'?'selected':'' }}>เผยแพร่</option>
+                                        <option value="วัฒนธรรมและประเพณี" {{ $item->type =='วัฒนธรรมและประเพณี'?'selected':'' }}>วัฒนธรรมและประเพณี</option>
+                                        <option value="ศาสนสงเคราะห์" {{ $item->type =='ศาสนสงเคราะห์'?'selected':'' }}>ศาสนสงเคราะห์</option>
+                                    </select>
+                                    <label for="floatingSelect">ประเภทกิจกรรม</label>
+                                </div>
+                                <div class="form-floating mb-3">
                                     <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="detail">{{ $item->detail }}</textarea>
                                     <label for="floatingTextarea2">รายละเอียด</label>
                                 </div>

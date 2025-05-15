@@ -32,24 +32,42 @@ class CourseController extends Controller
         return view('admin.course',compact('courses','years','year','persons','supjects'));
     }
     public function store(Request $request)
-    {   $year = Carbon::now()->year;
-        $course = Course::firstOrCreate(
-            ['supject_id'=>$request->supject,'year'=>$year]
+    {   $year = $request->year-543;
+        $course = Course::updateOrCreate (
+            ['supject_id'=>$request->supject,'year'=>$year,'room'=>$request->room]
         );
-        $teacher = new Teacter();
-        $teacher->course_id = $course->id;;
-        $teacher->personnel_id = $request->person;
-        $teacher->detail = $request->detail;
-        $teacher->save();
+        if ($request->person) {
+            $teacher = new Teacter();
+            $teacher->course_id = $course->id;;
+            $teacher->personnel_id = $request->person;
+            $teacher->detail = $request->detail;
+            $teacher->save();
 
-        $this->Action($teacher->id,Action::$INSERT_ACTION,Action::$TEACHER);
+            $this->Action($teacher->id,Action::$INSERT_ACTION,Action::$TEACHER);
+        }
 
         return redirect()->route('course',['year'=>$year])->with('success','เพิ่ม รายวิชาและครูสอน เรียบร้อย');
+    }
+    public function storeNonFormal(Request $request){
+        $year = $request->year-543;
+        $course = Course::updateOrCreate (
+            ['supject_id'=>$request->supject,'year'=>$year,'room'=>$request->room]
+        );
+        $id = $request->id;
+        $date = Carbon::now();
+        $regis = Register::firstOrCreate(
+            ['course_id' => $course->id,'personnel_id' => $id],
+            ['date' => $date],
+        );
+        $regis->result = $request->no;
+        $regis->save();
+        return redirect()->back();
     }
     public function update(Request $request)
     {
         $course = Course::find($request->id);
         $course->supject_id = $request->supject;
+        $course->room = $request->room;
         $course->year = $request->year-543;
         $course->save();
 

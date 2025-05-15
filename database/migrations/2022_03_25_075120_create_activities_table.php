@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('topic');
             $table->text('detail')->nullable();;
             $table->date('date');
+            $table->string('type');
             $table->timestamps();
         });
     }

@@ -8,6 +8,15 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    ประวัติ
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item {{  Route::is('templeHistory')?'active':'' }}"  href="{{ route('templeHistory')}}">วัดพระนอนจักรสีห์</a></li>
+                        <li><a class="dropdown-item {{  Route::is('buddhaHistory')?'active':'' }}"  href="{{ route('buddhaHistory')}}">หลวงพ่อพระนอน</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     บุคลากร
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -17,18 +26,40 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('activityUser')?'active':'' }}"  href="{{ route('activityUser',['year'=>'0']) }}">กิจกรรม</a>
+                    <a class="nav-link {{ Route::is('activityUser')?'active':'' }}"  href="{{ route('activityUser',['year'=>'0','type'=>'all']) }}">กิจกรรม</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('pilgrimageUser')?'active':'' }}"  href="{{ route('pilgrimageUser') }}">ธรรมยาตรา</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('newsUser')?'active':'' }}"  href="{{ route('newsUser') }}">ข่าว</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    ประชาสัมพันธ์
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item {{  Route::is('newsUser')?'active':'' }}"  href="{{ route('newsUser')}}">ข่าว</a></li>
+                        <li><a class="dropdown-item {{  Route::is('donationUser')?'active':'' }}"  href="{{ route('donationUser')}}">มหาทานบดี</a></li>
+                        <li><a class="dropdown-item {{  Route::is('videoUser')?'active':'' }}"  href="{{ route('videoUser')}}">วีดีทัศน์</a></li>
+                    </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    โรงเรียนพระปริยัติธรรม
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item {{  URL::current()==route('courseUser',['year'=>'*','type'=>'pali'])?'active':'' }}"  href="{{ route('courseUser',['year'=>'0','type'=>'pali'])}}">แผนกบาลี</a></li>
+                        <li><a class="dropdown-item {{  URL::current()==route('courseUser',['year'=>'*','type'=>'Dhamma'])?'active':'' }}"  href="{{ route('courseUser',['year'=>'0','type'=>'dhamma'])}}">แผนกธรรม</a></li>
+                        <li><a class="dropdown-item {{  Route::is('calendarUser')?'active':'' }}"  href="{{ route('calendarUser')}}">ปฏิทินการศึกษา</a></li>
+                        <li><a class="dropdown-item {{  Route::is('lv9')?'active':'' }}"  href="{{ route('lv9')}}">ทำเนียบเปรียญธรรม ๙ ประโยค</a></li>
+                        <li><a class="dropdown-item {{  Route::is('activityUser')?'active':'' }}"  href="{{ route('activityUser',['year'=>'0','type'=>'academy']) }}">กิจกรรม</a></li>
+                    </ul>
+                </li>
+                {{-- <li class="nav-item">
+                    <a class="nav-link {{ Route::is('unseen')?'active':'' }}"  href="{{ route('unseen') }}">สถานที่สำคัญ</a>
+                </li> --}}
             </ul>
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    @if (Route::has('login'))
+                    {{-- @if (Route::has('login'))
                         @auth
                             <li class="nav-item">
                                 <a href="{{ route('person', ['type'=>'monk']) }}" class="nav-link ">แอดมิน</a>
@@ -36,6 +67,7 @@
                         @else
                             <li class="nav-item">
                                 <div class="dropdown">
+                                    <a class="btn btn-primary" href="{{ route('login') }}" role="button">แอดมิน</a>
                                     <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                                       ผู้ดูแล
                                     </button>
@@ -66,13 +98,8 @@
                                     </form>
                                 </div>
                             </li>
-                            {{-- @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a href="{{ route('register') }}" class="nav-link ">Register</a>
-                                </li>
-                            @endif --}}
                         @endauth
-                    @endif
+                    @endif --}}
                 </ul>
             </div>
         </div>

@@ -17,10 +17,10 @@
                                 <img src={{ asset($item->image) }} class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <div style="display: inline-flex">
-                                        <h5 class="card-title">{{ $item->topic }}</h5>:
+                                        <h5 class="card-title ">{{ $item->topic }}</h5>:
                                         <small class="text-muted" style="display: contents">{{ \Carbon\Carbon::parse($item->created_at)->addYear(543)->locale('th')->isoFormat('dd D MMM YY') }}</small>
                                     </div>
-                                    <p class="card-text">{{ $item->detail }}</p>
+                                    <p class="card-text" style="max-height: 150px;overflow: auto;">{{ $item->detail }}</p>
                                 </div>
                                 <div class="card-footer text-muted text-center">
                                     @php

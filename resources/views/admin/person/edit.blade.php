@@ -23,6 +23,7 @@
             color: #000;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <div class="container-lg">
         <div class="card border-0">
             <div class="card-body">
@@ -31,9 +32,8 @@
                 </div>
                 <div class="card border-0">
                     <div class="card-body">
-                        <form action="{{ route('personnel.update',['personnel'=> $person->id ]) }}" method="POST" enctype="multipart/form-data" id="editPerson">
+                        <form action="{{ route('personnel.update',['personnel'=> $person->id ]) }}" enctype="multipart/form-data" id="editPerson" method="post">
                             @csrf
-                            @method('PUT')
                             <div class="row mt-2">
                                 <div class="mb-3 row">
                                     <div class="col-md-4">
@@ -54,28 +54,22 @@
                                             <label for="inputOrdianName">ฉายา</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
                                             <input type="date" class="form-control border-primary" id="inputBirthday" placeholder="ฉายา" name="birthday" required value="{{ $person->birthday }}" >
                                             <label for="inputBirthday">วันเกิด</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
                                             <input type="date" class="form-control border-warning" id="inputNovicDate" placeholder="วันบวชเป็นสามเณร" name="noviceDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นสามเณร" value="{{ $person->ordain_novice }}" >
                                             <label for="inputNovicDate">วันบรรพชา</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-floating mb-3">
                                             <input type="date" class="form-control border-warning" id="inputOrdianDate" placeholder="วันบวชเป็นพระ" name="ordianDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันบวชเป็นพระภิกษุ" value="{{ $person->ordain_monk }}">
                                             <label for="inputOrdianDate">วันอุปสมบท</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-floating mb-3">
-                                            <input type="date" class="form-control" id="inputNunDate" placeholder="วันรับศีล๘" name="nunDate" data-bs-toggle="tooltip" data-bs-placement="top" title="วันรับศีล๘" value="{{ $person->ordain_nun }}">
-                                            <label for="inputNunDate">วันรับศีล๘</label>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -113,8 +107,8 @@
                                             @if ($type = $person->type)
                                                 @foreach ($type as $item)
                                                     <div class="chip">
-                                                        {{ $item->personnel_type->name }} : {{ \Carbon\Carbon::parse($item->date)->addYear(543)->locale('th')->isoFormat('D MMM YY') }}
-                                                        <input type="hidden" name="typeChips[]" value="{{ $item->personnel_type->id }} : {{ $item->date }}"><span class="closebtn" onclick="this.parentNode.parentNode.removeChild(this.parentNode);">&times;</span>
+                                                        {{ $item->personnel_type->name }} : {{ \Carbon\Carbon::parse($item->date)->addYear(543)->locale('th')->isoFormat('D MMM YY') }}&nbsp;&nbsp;
+                                                        <a href="{{ route('type.show',$item->id) }}" class="btn-close"></a>
                                                     </div>
                                                 @endforeach
                                             @endif
@@ -128,8 +122,9 @@
                                             @if ($rank = $person->rank)
                                                 @foreach ($rank as $item)
                                                     <div class="chip">
-                                                        {{ $item->name }} : {{ \Carbon\Carbon::parse($item->date)->addYear(543)->locale('th')->isoFormat('D MMM YY') }}
-                                                        <input type="hidden" name="rankChips[]" value="{{ $item->name }} : {{ $item->date }}"><span class="closebtn" onclick="this.parentNode.parentNode.removeChild(this.parentNode);">&times;</span>
+                                                        {{ $item->name }} : {{ \Carbon\Carbon::parse($item->date)->addYear(543)->locale('th')->isoFormat('D MMM YY') }}&nbsp;&nbsp;
+                                                        @method('DELETE')
+                                                        <a href="{{ route('rank.show',$item->id) }}" class="btn-close"></a>
                                                     </div>
                                                 @endforeach
                                             @endif
@@ -144,9 +139,9 @@
                                             <input class="form-control" type="file" id="formFile" name="image" accept="image/png, image/jpeg">
                                         </div>
                                         @if ($person->path != '')
-                                            <img src="{{ asset($person->path) }}" alt="" class="shadow rounded" style="filter: grayscale({{ $person->active == 1 ? '0%' : '100%' }})" width="70px">
+                                            <img src="{{ asset($person->path) }}" alt="" class="shadow rounded" style="filter: grayscale({{ $person->active == 1 ? '0%' : '100%' }});width:100px">
                                         @else
-                                            <img src="{{ url('images/person/no.png') }}" alt="" class="shadow rounded" style="filter: grayscale({{ $person->active == 1 ? '0%' : '100%' }})" width="70px">
+                                            <img src="{{ url('images/person/no.png') }}" alt="" class="shadow rounded" style="filter: grayscale({{ $person->active == 1 ? '0%' : '100%' }});width:100px">
                                         @endif
                                     </div>
                                 </div>
@@ -158,6 +153,7 @@
                                 </div>
                                 <div class="row text-center">
                                     <div class="col">
+                                        @method('PUT')
                                         <a name="" id="" class="btn btn-secondary" href="{{ route('personnel.show',['personnel'=>$person->id]) }}" role="button">ยกเลิก</a>
                                         <input type="submit" value="แก้ไข" class="btn btn-warning">
                                     </div>
@@ -187,6 +183,7 @@
                     </div>
                     <div class="form-floating mt-3">
                         <input class="form-control" type="date" id="date" placeholder="วันที่" required >
+                        <input type="hidden" id="id" value="{{ $person->id }}">
                         <label for="floatingInputGrid">วันที่</label>
                     </div>
                 </div>
@@ -212,6 +209,7 @@
                     </div>
                     <div class="form-floating mt-3">
                         <input class="form-control" type="date" id="date" placeholder="วันที่" required >
+                        <input type="hidden" id="id" value="{{ $person->id }}">
                         <label for="floatingInputGrid">วันที่</label>
                     </div>
                 </div>
@@ -222,6 +220,7 @@
             </div>
         </div>
     </div>
+
     <script>
          function createChip(text,id,date,idDiv){
             const div = document.createElement('div');
@@ -236,34 +235,48 @@
             document.getElementById(idDiv).appendChild(div);
         }
         function AddType(){
+
             var addModal = document.getElementById('addTypeModal');
             var select = addModal.querySelector('.modal-body #type');
-            var id = select.value;
-            var text = select.options[select.selectedIndex].text;
+            var type_id = select.value;
             var date = addModal.querySelector('.modal-body #date').value;
-            if(type.length>0 && date.length>0){
-                createChip(text,id,date,'typeChips');
-            }
-            ClearAddTypeModal();
+            var id = addModal.querySelector('.modal-body #id').value;
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{ route('type.store') }}",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                    personnel_type_id: type_id,
+                    date: date,
+                    personnel_id: id
+                },
+                success: function(data) {
+                    // log response into console
+                    location.reload();
+                }
+            });
         }
         function AddRank(){
             var addModal = document.getElementById('addRankModal');
             var rank = addModal.querySelector('.modal-body #rank').value;
             var date = addModal.querySelector('.modal-body #date').value;
-            if(rank.length>0 && date.length>0){
-                createChip(rank,-1,date,'rankChips');
-            }
-            ClearAddRankModal();
-        }
-        function ClearAddTypeModal(){
-            var addModal = document.getElementById('addTypeModal');
-            addModal.querySelector('.modal-body #type').options[0].selected = true;
-            addModal.querySelector('.modal-body #date').value = '';
-        }
-        function ClearAddRankModal(){
-            var addModal = document.getElementById('addRankModal');
-            addModal.querySelector('.modal-body #rank').value = '';
-            addModal.querySelector('.modal-body #date').value = '';
+            var id = addModal.querySelector('.modal-body #id').value;
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{ route('rank.store') }}",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                    name: rank,
+                    date: date,
+                    id: id
+                },
+                success: function(data) {
+                    // log response into console
+                    location.reload();
+                }
+            });
         }
     </script>
 </x-app-layout>

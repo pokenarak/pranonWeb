@@ -24,22 +24,35 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    การศึกษา
+                    โรงเรียนพระปริยัติธรรม
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item {{ Route::is('student') ? 'active' : '' }}"  href="{{ route('student',['year'=>'0']) }}">นักเรียน</a></li>
                         <li><a class="dropdown-item {{ Route::is('course') ?'active':'' }}"  href="{{ route('course',['year'=>'0']) }}">ครูสอน</a></li>
+                        <li><a class="dropdown-item {{ Route::is('calendar.*') ?'active':'' }}"  href="{{ route('calendar.index') }}">ปฏิทินการศีกษา</a></li>
                     </ul>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link {{ (Route::is('pilgrimage')) ? 'active' : '' }}" aria-current="page" href="{{ route('pilgrimage.index') }}">ธุดงค์</a>
+                    <a class="nav-link {{ (Route::is('pilgrimage.*')) ? 'active' : '' }}" aria-current="page" href="{{ route('pilgrimage.index') }}">ธุดงค์</a>
                 </li>
                 <li class="nav-item" >
                     <a class="nav-link {{ Route::is('activity')?'active':'' }}" aria-current="page" href="{{ route('activity',['year'=> '0']) }}">กิจกรรม</a>
                 </li>
-                <li class="nav-item ">
-                    <a class="nav-link {{ Route::is('news')?'active':'' }}"  href="{{ route('news') }}">ประชาสัมพันธ์</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    ประชาสัมพันธ์
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item {{ Route::is('news') ? 'active' : '' }}"  href="{{ route('news') }}">ข่าว</a></li>
+                        <li><a class="dropdown-item {{ Route::is('donation.*') ?'active':'' }}"  href="{{ route('donation.index') }}">มหาทานบดี</a></li>
+                        <li><a class="dropdown-item {{ Route::is('video.*') ?'active':'' }}"  href="{{ route('video.index') }}">วีดีทัศน์</a></li>
+                    </ul>
                 </li>
+                @if (Auth::user()->role =='SUPER_ADMIN')
+                    <li class="nav-item ">
+                        <a class="nav-link {{ Route::is('admin.*')?'active':'' }}"  href="{{ route('admin.index') }}">ผู้ดูแล</a>
+                    </li>
+                @endif
             </ul>
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -64,9 +77,9 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form method="POST" class="dropdown-item btn" action="{{ route('logout') }}" x-data>
+                                <form method="POST" action="{{ route('logout') }}" x-data>
                                     @csrf
-                                    <button type="submit" class="text-danger">ออกจากระบบ</button>
+                                    <button type="submit" class="text-danger dropdown-item btn">ออกจากระบบ</button>
                                 </form>
                             </li>
                         </ul>

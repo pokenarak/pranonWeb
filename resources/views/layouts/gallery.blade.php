@@ -1,7 +1,7 @@
 <div class="display">
     <div class="portfolio-item row">
         @foreach ($dataGallery as $item)
-            <div class="item selfie col-lg-2 col-md-4 col-6 col-sm">
+            <div class="item selfie col-lg-2 col-md-4 col-6 col-sm mb-2">
                 <img src="{{ asset($item->path) }}" alt="" style="overflow: auto" data-bs-toggle="modal" data-bs-target="#exampleModal">
             </div>
         @endforeach

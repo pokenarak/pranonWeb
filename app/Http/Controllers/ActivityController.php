@@ -46,7 +46,8 @@ class ActivityController extends Controller
         $activity->topic = $request->topic;
         $activity->detail = $request->detail;
         $activity->user_id = Auth::id();
-        $activity->date = Carbon::now();
+        $activity->date = $request->date;
+        $activity->type = $request->type;
         $activity->save();
         if($request->file('image')){
             $this->uploadImage($request->file('image'),$activity->id);
@@ -76,6 +77,7 @@ class ActivityController extends Controller
         $activity->detail = $request->detail;
         $activity->user_id = Auth::id();
         $activity->date = $request->date;
+        $activity->type = $request->type;
         $activity->save();
         if($request->file('image')){
             $this->uploadImage($request->file('image'),$activity->id);

@@ -21,6 +21,3 @@ export default {
 
     plugins: [forms, typography],
 };
-module.exports = {
-    prefix: 'tw-',
-  }

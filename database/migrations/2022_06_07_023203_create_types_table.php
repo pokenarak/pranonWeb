@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('personnel_id')->constrained()->onUpdate('CASCADE')->onDelete('RESTRICT');
             $table->foreignId('personnel_type_id')->constrained()->onUpdate('CASCADE')->onDelete('RESTRICT');
             $table->date('date');
+            $table->softDeletes();
         });
     }
 

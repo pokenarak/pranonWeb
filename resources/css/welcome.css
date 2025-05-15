@@ -117,3 +117,9 @@ body {
 span {
     content: "\2713";
 }
+#person{
+    transition: .3s;
+}
+#person:hover {
+    transform: scale(1.1);
+}
