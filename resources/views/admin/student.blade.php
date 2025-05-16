@@ -24,7 +24,8 @@
                     </div>
                 </div>
                 <div class="text-end mb-2">
-                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year') ]) }}" role="button">โหลดบาลี</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'บาลี' ]) }}" role="button">โหลดบาลี</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'ธรรม' ]) }}" role="button">โหลดนักธรรม</a>
                 </div>
                 <div class="accordion mb-3 overflow-auto" id="accordionExample" style="max-height: 70vh">
                     @foreach ($courses as $index => $course)

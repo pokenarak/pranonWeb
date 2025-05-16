@@ -58,9 +58,9 @@ class StudentController extends Controller
 
         return view('admin.student',compact('courses','years','monkPali','monkDhamma','novicePali','noviceDhamma','nunPali','nunDhamma'));
     }
-    public function exportPali() 
+    public function exportPali($year,$type) 
     {
-        return Excel::download(new RegisterExport('2025'), 'pali.xlsx');
+        return Excel::download(new RegisterExport($year,$type), $type.'.xlsx');
     }
     public function store(Request $request)
     {

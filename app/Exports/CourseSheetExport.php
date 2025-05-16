@@ -32,6 +32,7 @@ class CourseSheetExport implements WithTitle,WithHeadings, FromQuery, WithMappin
             'นามสกุล',
             'อายุ',
             'พรรษา'
+            
         ];
     }
     public function query(){

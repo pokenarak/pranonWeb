@@ -57,8 +57,10 @@ Route::middleware([
 
     
     Route::get('/person/{type}', [PersonnelController::class,'index'])->name('person');
+    Route::get('/personRelocate', [PersonnelController::class,'relocate'])->name('personRelocate');
     Route::get('/deleteImagePerson/{id}/{path}', [PersonnelController::class,'deleteImage'])->name('deleteImagePerson');
     Route::resource('personnel',PersonnelController::class)->only('show','create','store','edit','update','destroy');
+
     Route::resource('rainsRetreat',RainsRetreatController::class)->only('show','store');
     Route::delete('/deleteRainsRetreat',[RainsRetreatController::class,'destroy'])->name('deleteRainsRetreat');
 
@@ -71,7 +73,7 @@ Route::middleware([
     Route::post('/addStudent', [StudentController::class,'store']);
     Route::put('/pdateStudent', [StudentController::class,'update']);
     Route::delete('/destroyStudent', [StudentController::class,'destroyStudent']);
-    Route::get('/report/pali/{year}',[StudentController::class,'exportPali'])->name('exportPali');
+    Route::get('/report/pali/{year}/{type}',[StudentController::class,'exportPali'])->name('exportPali');
 
     Route::get('/course/{year}', [CourseController::class,'index'])->name('course');
     Route::post('/addCourse', [CourseController::class,'store'])->name('addCourse');

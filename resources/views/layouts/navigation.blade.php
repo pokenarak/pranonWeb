@@ -14,6 +14,7 @@
                         <li><a class="dropdown-item {{ URL::current()==route('person',['type'=>'monk'])?'active':'' }}"  href="{{ route('person',['type'=>'monk']) }}">พระภิกษุ</a></li>
                         <li><a class="dropdown-item {{ URL::current()==route('person',['type'=>'novice'])?'active':'' }}"  href="{{ route('person',['type'=>'novice']) }}">สามเณร</a></li>
                         <li><a class="dropdown-item {{ URL::current()==route('person',['type'=>'nun'])?'active':'' }}"  href="{{ route('person',['type'=>'nun']) }}">อุบาสกอุบาสิกา</a></li>
+                        <li><a class="dropdown-item {{ Route::is('personRelocate')?'active':'' }}"  href="{{ route('personRelocate') }}">สึก/ย้ายวัด/ไม่อยู่แล้ว</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item {{ Route::is('personnelType')?'active':'' }}"  href="{{ route('personnelType') }}">ตำแหน่ง</a></li>
                         <li><a class="dropdown-item {{ Route::is('rainsRetreat.*')?'active':'' }}"  href="{{ route('rainsRetreat.show',['rainsRetreat'=> \Carbon\Carbon::now()->year ]) }}">จำพรรษา</a></li>
@@ -27,7 +28,7 @@
                     โรงเรียนพระปริยัติธรรม
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item {{ Route::is('student') ? 'active' : '' }}"  href="{{ route('student',['year'=>'0']) }}">นักเรียน</a></li>
+                        <li><a class="dropdown-item {{ Route::is('student') ? 'active' : '' }}"  href="{{ route('student',['year'=>\Carbon\Carbon::now()->year]) }}">นักเรียน</a></li>
                         <li><a class="dropdown-item {{ Route::is('course') ?'active':'' }}"  href="{{ route('course',['year'=>'0']) }}">ครูสอน</a></li>
                         <li><a class="dropdown-item {{ Route::is('calendar.*') ?'active':'' }}"  href="{{ route('calendar.index') }}">ปฏิทินการศีกษา</a></li>
                     </ul>

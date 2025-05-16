@@ -26,10 +26,10 @@ class PersonnelController extends Controller
             case 'monk':
                 $type = 'พระภิกษุ';
 
-                $master = Personnel::whereHas('type',function (Builder $query){
+                $master = Personnel::where('active','1')->whereHas('type',function (Builder $query){
                     $query->whereIn('personnel_type_id',['1','2','3']);
                 })->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get()->sortBy('type.personnel_type_id',SORT_REGULAR,false);
-                $under = Personnel::whereDoesntHave('type',function (Builder $query){
+                $under = Personnel::where('active','1')->whereDoesntHave('type',function (Builder $query){
                     $query->whereIn('personnel_type_id',['1','2','3']);
                 })->whereNotNull('ordain_monk')->orderBy('ordain_monk','ASC')->orderBy('birthday','asc')->get();
                 $data = $master->merge($under);
@@ -37,19 +37,23 @@ class PersonnelController extends Controller
             break;
             case 'novice':
                 $type = 'สามเณร';
-                $data = Personnel::whereNotNull('ordain_novice')->whereNull('ordain_monk')->orderBy('birthday')->paginate('20');
+                $data = Personnel::where('active','1')->whereNotNull('ordain_novice')->whereNull('ordain_monk')->orderBy('birthday')->paginate('20');
                 break;
             case 'nun':
                 $type = 'อุบาสกอุบาสิกา';
-                $data = Personnel::whereNull('ordain_monk')->whereNull('ordain_novice')->orderBy('birthday')->paginate('20');
+                $data = Personnel::where('active','1')->whereNull('ordain_monk')->whereNull('ordain_novice')->orderBy('birthday')->paginate('20');
             break;
         }
-        $sortData = $data->getCollection()->sortByDesc('active');
-        $data->setCollection($sortData);
+        // $sortData = $data->getCollection()->sortByDesc('active');
+        // $data->setCollection($sortData);
         $data->each(function($item){
             $item->name = $this->nameTitle($item->id,$item).$item->name;
         });
         return view('admin.person.index',compact('data','type'));
+    }
+    public function relocate(){
+        $persons = Personnel::where('active','0')->paginate('20');
+        return view('admin.person.relocate',compact('persons'));
     }
     public function show($id)
     {
