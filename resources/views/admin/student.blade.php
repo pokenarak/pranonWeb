@@ -24,8 +24,12 @@
                     </div>
                 </div>
                 <div class="text-end mb-2">
-                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'บาลี' ]) }}" role="button">โหลดบาลี</a>
-                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'ธรรม' ]) }}" role="button">โหลดนักธรรม</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'บาลี' ]) }}" role="button" style="display: inline-flex">
+                        <img src="{{ url('images/icon/save.svg') }}" alt="" style="filter: invert(1)"> บาลี
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('exportPali',['year'=>request()->route()->parameter('year'),'type'=>'ธรรม' ]) }}" role="button" style="display: inline-flex">
+                        <img src="{{ url('images/icon/save.svg') }}" alt="" style="filter: invert(1)"> ธรรม
+                    </a>
                 </div>
                 <div class="accordion mb-3 overflow-auto" id="accordionExample" style="max-height: 70vh">
                     @foreach ($courses as $index => $course)
@@ -57,7 +61,7 @@
                                             <input type="hidden" name="id" value="{{ $course->id }}">
                                             @foreach ($course->register as $student)
                                                 @php
-
+                                                    
                                                     $flag = '';
                                                     if(!$student->personnel->ordain_monk && !$student->personnel->ordain_novice){
                                                         $flag = 'คุณ';

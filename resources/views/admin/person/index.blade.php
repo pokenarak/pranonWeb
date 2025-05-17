@@ -30,14 +30,30 @@
                 </div>
                 @if ($data->count()>0)
                     <div class="pb-4 text-center">
-                        <div role="search">
-                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="ชื่อ..." onKeyup="searchName(this)">
-                            <datalist id="datalistOptions">
-                                @foreach ($data->pluck('name')->unique()->all() as $item)
-                                    <option value={{ $item}}>
-                                @endforeach
-                            </datalist>
+                        <div class="row">
+                            <div class="col">
+                                <div role="search">
+                                    <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="ชื่อ..." onKeyup="searchName(this)">
+                                    <datalist id="datalistOptions">
+                                        @foreach ($data->pluck('name')->unique()->all() as $item)
+                                            <option value={{ $item}}>
+                                        @endforeach
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-3 col-sm-2 col-md-1 col-xl-1">
+                                @php
+                                    $type='monk';
+                                    if(request()->route()->parameter('type')){
+                                        $type=request()->route()->parameter('type');
+                                    }
+                                @endphp
+                                <a class="btn btn-primary" href="{{ route('exportPerson',['type'=>$type]) }}" role="button">
+                                    <img src="{{ url('images/icon/save.svg') }}" alt="">
+                                </a>
+                            </div>
                         </div>
+
                     </div>
                     <div class="container">
                         <div class="row row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center">

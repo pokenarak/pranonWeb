@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PersonExport;
 use App\Models\Action;
 use App\Models\Personnel;
 use App\Models\personnel_type;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PersonnelController extends Controller
 {
@@ -226,6 +228,9 @@ class PersonnelController extends Controller
             $nameTitle = "สามเณร";
         }
         return $nameTitle;
+    }
+    public function exportPerson($type){
+        return Excel::download(new PersonExport($type), $type.'.xlsx');
     }
 
 }

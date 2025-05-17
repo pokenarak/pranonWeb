@@ -71,9 +71,9 @@ class CourseSheetExport implements WithTitle,WithHeadings, FromQuery, WithMappin
         ];
        
     }
-     public function columnFormats(): array{
+    public function columnFormats(): array{
         return[
             'A'=> NumberFormat::FORMAT_NUMBER,
         ];
-     }
+    }
 }

@@ -60,6 +60,7 @@ Route::middleware([
     Route::get('/personRelocate', [PersonnelController::class,'relocate'])->name('personRelocate');
     Route::get('/deleteImagePerson/{id}/{path}', [PersonnelController::class,'deleteImage'])->name('deleteImagePerson');
     Route::resource('personnel',PersonnelController::class)->only('show','create','store','edit','update','destroy');
+    Route::get('/report/person/{type}',[PersonnelController::class,'exportPerson'])->name('exportPerson');
 
     Route::resource('rainsRetreat',RainsRetreatController::class)->only('show','store');
     Route::delete('/deleteRainsRetreat',[RainsRetreatController::class,'destroy'])->name('deleteRainsRetreat');

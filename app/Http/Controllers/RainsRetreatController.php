@@ -44,7 +44,9 @@ class RainsRetreatController extends Controller
         })->get();
         $years = RainsRetreat::orderByDesc('year')->pluck('year')->unique();
 
-        $persons = Personnel::all();
+        $persons = Personnel::where('active','1')->whereDoesntHave('rainsRetreat',function ($q) use($year){
+            $q->where('year',$year);
+        })->get();
         $monks = $persons->whereNotNull('ordain_monk')->sortBy('ordain_monk')->all();
         $novices = $persons->whereNull('ordain_monk')->whereNotNull('ordain_novice')->sortBy('birthday')->all();
 
